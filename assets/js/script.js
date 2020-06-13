@@ -14,8 +14,8 @@ const headSize = {
 }
 
 const appleSize = {
-    height: 20,
-    width: 20
+    height: 10,
+    width: 10
 }
 
 const head = {
@@ -72,6 +72,7 @@ function processKeydown(e){
     if (e.keyCode == rightArrowCode){
         moveRight();
     }
+    checkEat();
     drawHead();
 }
 
@@ -132,4 +133,18 @@ function drawApples(){
 
 function randomCoord(limit){
     return Math.floor(Math.random() * limit);
+}
+
+function checkEat(){
+    apples.forEach((apple) => {
+        let xLowerLimit = head.xPos+headSize.width > apple.xCoord;
+        let xUpperLimit = head.xPos < apple.xCoord;
+        let yLowerLimit = head.yPos+headSize.height > apple.yCoord;
+        let yUpperLimit = head.yPos < apple.yCoord;
+        if (xLowerLimit && xUpperLimit && yLowerLimit && yUpperLimit){
+            document.querySelector("#counter").innerHTML = parseInt(document.querySelector("#counter").innerHTML)+1;
+            console.log(apples.indexOf(apple));
+            apples.splice(apples.indexOf(apple),1);
+        }
+    })
 }
