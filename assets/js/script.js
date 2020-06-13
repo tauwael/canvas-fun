@@ -33,6 +33,11 @@ const speed = 10;
 let apples = [];
 
 function init(){
+        canvas.width = window.innerWidth*0.75;
+        canvas.height = window.innerHeight*0.75;
+        canvasDimensions.width = window.innerWidth*0.75;
+        canvasDimensions.height = window.innerHeight*0.75;
+
     drawBoard();
     drawHead();
     startListeners();
@@ -77,7 +82,7 @@ function processKeydown(e){
 }
 
 function checkLoseCondition(x, y){
-    return (x > 0 && x < 800-20 && y > 0 && y < 500-20)
+    return (x > 0 && x < canvasDimensions.width-20 && y > 0 && y < canvasDimensions.height-20)
 }
 
 function moveDown(){
