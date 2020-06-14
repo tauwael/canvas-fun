@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", init);
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+let currentDirection = 39;
 const leftArrowCode = 37;
 const upArrowCode = 38;
 const rightArrowCode = 39;
@@ -28,36 +29,59 @@ const canvasDimensions = {
     height:500
 }
 
-const speed = 10;
+const speed = 5;
 
 let apples = [];
 
 function init(){
-        canvas.width = window.innerWidth*0.75;
-        canvas.height = window.innerHeight*0.75;
-        canvasDimensions.width = window.innerWidth*0.75;
-        canvasDimensions.height = window.innerHeight*0.75;
-
+    setCanvasSize();
     drawBoard();
-    drawHead();
     startListeners();
-    for (let i=0; i<20; i++){
+    spawnApples(20);
+    repeatOften();
+}
+
+function spawnApples(amount){
+    for (let i=0; i<amount; i++){
         spawnApple();
     }
 }
 
-function drawBoard(){
+function setCanvasSize(){
+    canvas.width = window.innerWidth*0.75;
+    canvas.height = window.innerHeight*0.75;
+    canvasDimensions.width = window.innerWidth*0.75;
+    canvasDimensions.height = window.innerHeight*0.75;
+}
 
+function repeatOften() {
+    if (currentDirection === rightArrowCode){
+        moveRight();
+    } else
+    if (currentDirection === leftArrowCode) {
+        moveLeft();
+    } else
+    if (currentDirection === upArrowCode) {
+        moveUp();
+    } else
+    if (currentDirection === downArrowCode) {
+        moveDown();
+    }
+    checkEat();
+    drawHead();
+    drawApples();
+    requestAnimationFrame(repeatOften);
+  }
+
+function drawBoard(){
     ctx.strokeStyle = "#C5DCA0"
     ctx.strokeRect(0, 0, 800, 500);
-
 }
 
 function drawHead(){
     ctx.clearRect(0, 0, canvasDimensions.width, canvasDimensions.height);
     ctx.fillStyle = "#C5DCA0";
     ctx.fillRect(head.xPos,head.yPos,headSize.width, headSize.height);
-    drawApples();
 }
 
 function startListeners(){
@@ -65,20 +89,7 @@ function startListeners(){
 }
 
 function processKeydown(e){
-    if (e.keyCode == downArrowCode){
-        moveDown();
-    }
-    if (e.keyCode == upArrowCode){
-        moveUp();
-    }
-    if (e.keyCode == leftArrowCode){
-        moveLeft();
-    }
-    if (e.keyCode == rightArrowCode){
-        moveRight();
-    }
-    checkEat();
-    drawHead();
+    currentDirection = e.keyCode;
 }
 
 function checkLoseCondition(x, y){
@@ -125,15 +136,13 @@ function spawnApple(){
     let xCoord = randomCoord(canvasDimensions.width);
     let yCoord = randomCoord(canvasDimensions.height);
     apples.push({xCoord: xCoord, yCoord: yCoord});
-    drawApples();
 }
 
 function drawApples(){
     apples.forEach((apple) => {
         ctx.fillStyle = "#eb4034";
         ctx.fillRect(apple.xCoord,apple.yCoord, appleSize.width, appleSize.height);
-    })
-
+    });
 }
 
 function randomCoord(limit){
@@ -148,8 +157,7 @@ function checkEat(){
         let yUpperLimit = head.yPos < apple.yCoord;
         if (xLowerLimit && xUpperLimit && yLowerLimit && yUpperLimit){
             document.querySelector("#counter").innerHTML = parseInt(document.querySelector("#counter").innerHTML)+1;
-            console.log(apples.indexOf(apple));
             apples.splice(apples.indexOf(apple),1);
         }
     })
-}
+}  
